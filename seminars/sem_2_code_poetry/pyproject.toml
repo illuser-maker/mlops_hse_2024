@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "sem-2-code-works"
+version = "0.1.0"
+description = ""
+authors = ["illuser <illuser@bk.ru>"]
+readme = "sem_scenary.txt"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = {version = "0.115.0", extras = ["all"]}
+scikit-learn = "^1.4.2"
+requests = "^2.32.3"
+
+
+[tool.poetry.group.dev.dependencies]
+pip-tools = "^7.4.1"
+black = "^24.8.0"
+ruff = "^0.6.5"
+mypy = "^1.11.2"
+
+[tool.black]
+line-length = 20
+
+[tool.mypy]
+disallow_untyped_defs = true
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

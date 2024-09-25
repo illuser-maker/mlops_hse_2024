@@ -1,0 +1,48 @@
+pip install poetry
+
+poetry init
+
+poetry config virtualenvs.in-project true
+
+poetry add --group dev pip-tools
+poetry run pip-compile
+
+poetry add fastapi[all]=0.115.0
+poetry add scikit-learn
+# поменяли в томлике sklearn на 1.4.2
+poetry lock
+poetry install
+# поменяли в томлике sklearn на ^1.4.2
+poetry update
+
+# Смотрим энвы
+poetry env list
+
+# запуск консоли
+poetry shell
+exit
+
+poetry add --group dev black ruff mypy
+poetry run black --check .
+poetry run black .
+poetry run ruff check
+# правим код, убираем неиспользуемую переменную
+poetry run ruff check
+poetry run ruff check --fix
+poetry run ruff check
+# добавляем в томлик:
+# [tool.mypy]
+# disallow_untyped_defs = true
+poetry run mypy .
+# добавили  #type: ignore [no-untyped-def] в 19 строке в коде, проверяем, что исчезли ошибки с 19 строкой
+poetry run mypy .
+# добавляем в томлик:
+# [tool.black]
+# line-length = 20
+poetry run black .
+
+poetry run python3 setup.py sdist bdist_wheel
+# немножко файл менеджмента, а затем:
+poetry build
+
+poetry run python3 parallel.py
