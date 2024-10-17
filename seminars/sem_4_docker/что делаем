@@ -1,0 +1,74 @@
+docker build -f Dockerfile_1 -t docker-test .
+# Получаем ошибку, стартуем докер десктоп (для винды и мака, для убунты докер демона)
+docker build -f Dockerfile_1 -t docker-test .
+# собираем, смотрим что будет, запускаем:
+docker run docker-test:latest
+# нет доступа, добавляем паблиш
+docker run -p 8502:8501 docker-test:latest
+# Смотрим наш дашборд на http://localhost:8502/
+# Запускаем с ограничениями по ресурсам
+docker run -p 8502:8501 -m 1g --cpus 1 docker-test:latest
+# Цпу выше скорее всего не ограничило, тут сложно. Но это редкая необходимость.
+
+docker build -f Dockerfile_2 -t docker-test-entry .
+docker run -it docker-test:latest bash # запускается, все отлично
+docker run -it docker-test-entry:latest bash #запускается, но не баш, вот и разница
+
+docker build -f Dockerfile_3 -t docker-test-multi .
+docker run -it docker-test-multi:latest bash
+# в контейнере: pip show fastapi, смотрим, что собрался последний
+docker build -f Dockerfile_3 --target base -t docker-test-multi .
+docker run -it docker-test-multi:latest bash
+# в контейнере: pip show fastapi, смотрим, что собрался только base
+
+# смотрим сеть контейнера в DockerDescktop в Inspect->Networks
+docker run --network host -it docker-test-multi:latest bash
+# опять смотрим сеть контейнера, видим host, объясняем зачем
+
+# объясняем --ipc, зачем нужен, про опцию host
+
+docker run -it docker-test-multi:latest whoami
+# видим root
+docker build -f Dockerfile_4 -t docker-test-gleb .
+docker run -it docker-test-gleb:latest whoami
+# видим gleb
+docker build --build-arg UID=6969 -f Dockerfile_4 -t docker-test-gleb . 
+docker run -it docker-test-gleb:latest id -u gleb
+# видим 6969
+
+docker run --mount type=bind,source="$(pwd)"/volume_dir,target=/volume_dir -it docker-test-gleb:latest bash
+# ls /volume_dir, видим наш файл
+# пробуем echo "test" > /volume_dir/test2, не получается
+docker build --build-arg UID=`id -u illuser` -f Dockerfile_4 -t docker-test-gleb .
+docker run --mount type=bind,source="$(pwd)"/volume_dir,target=/volume_dir -it docker-test-gleb:latest bash
+# пробуем echo "test" > /volume_dir/test2, теперь получается
+docker run -v "$(pwd)"/volume_dir:/volume_dir -it docker-test-gleb:latest bash
+# то же самое получаем, что и с mount
+
+docker volume create my-vol
+docker run -v my-vol:/volume_dir -it docker-test-gleb:latest bash
+#нет прав на echo "test" > /volume_dir/test2
+docker build --build-arg UID=`id -u illuser` -f Dockerfile_5 -t docker-test-gleb .
+docker run -v my-vol:/home/gleb/volume_dir -it docker-test-gleb:latest bash
+# пробуем echo "test" > /volume_dir/test2, теперь получается
+docker run -v my-vol:/home/gleb/volume_dir -it docker-test-gleb:latest bash
+# смотрим - созданный ранее файлик сохраняется
+
+# объясняю про схему базовый образ -> кастомный образ
+
+docker image tag docker-test-gleb registry-host:5000/docker-test-gleb-new
+docker push registry-host:5000/docker-test-gleb-new
+# команда выше не сработает, просто пример
+
+
+docker compose build
+docker compose up
+# доступа к нашему сервису нет :(
+docker compose down
+# добавляем ports к сервису 
+docker compose up
+# теперь есть :)
+# добавляем volumes к сервису
+# идем в докер через docker desctop, создаем файлик test в нашей директории app, смотрим, что появился на хосте
+
+

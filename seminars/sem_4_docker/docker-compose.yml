@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  my-service:
+    image: docker-test-gleb-new
+    environment:
+      - GLEB=MASHINA
+    ports:
+      - "8502:8501"
+    volumes:
+      - ./volume_dir:/home/gleb/volume_dir
+  postgres:
+    image: postgres:13.3
+    env_file: "postgres.env"
+    ports:
+      - "5432:5432"
+    
