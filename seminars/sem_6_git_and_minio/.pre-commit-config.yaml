@@ -1,0 +1,15 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    -   id: check-yaml
+    -   id: requirements-txt-fixer
+
+-   repo: local
+    hooks:
+    -   id: gachi-print
+        name: gachi
+        entry: python3 my_hooks/gachi-print.py
+        language: system
+        types: [python]
+        verbose: true

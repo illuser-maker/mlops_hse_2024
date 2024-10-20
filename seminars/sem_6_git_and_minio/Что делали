@@ -1,0 +1,50 @@
+# Посмотрели ветки, коммиты, и т.д., что есть в гите
+git init
+# Сделали измение в test_1.py
+git add test_1.py
+git commit -m "upd"
+
+# Создали ветку feature/MLOPS-1
+git branch feature/MLOPS-1
+# Сделали еще раз измение в test_1.py
+git add test_1.py
+git commit -m "upd"
+# Переключились на новую ветку
+git checkout feature/MLOPS-1
+# Сделали измение в test_1.py в той же строчке, 
+# что и в master (дефолтной ветке)
+git add test_1.py
+git commit -m "upd"
+# Переключились на дефолтную master ветку
+git checkout master
+# Пробуем мерж
+git merge feature/MLOPS-1
+# Видим мерж конфликт, исправляем его
+# оставив нужную строчку и удалив лишнее,
+# в том числе и строки со стрелочками
+git add .
+git merge --continue
+# Довольные, мерж удался
+
+# Смотрим хуки
+ls .git/hooks
+cat .git/hooks/pre-commit
+
+# Пробуем удалить из .pre-commit-config
+# строчку `id: trailing-whitespace`
+# Смотрим, что при коммите больше не пишет этот прекоммит
+pre-commit install
+git add test_1.py # поменяли перед этим строчку
+git commit -m "upd"
+# Видим исчезновнение пре-коммита удаленного, радуемся
+
+# Запускаем minio
+docker run -p 9000:9000 \
+    -d -p 9001:9001 -e "MINIO_ROOT_USER=minio99" \
+    -e "MINIO_ROOT_PASSWORD=minio123" \
+    quay.io/minio/minio server /data --console-address ":9001"
+# Объяснение: порт 9000 - s3 api, и endpoint_url у нас - http:localhost:9000
+# Порт 9001 - веб консоль, /data - место, где будут данные в контейнере храниться,
+# которые в s3
+
+# Заходим на вебконосль и играемся там: http://localhost:9001
