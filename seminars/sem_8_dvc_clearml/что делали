@@ -1,0 +1,30 @@
+git init
+dvc init
+ЛИОБО
+dvc init --no-scm #инициализация двс без гита
+
+#закиньте сами что-нибудь в data, любые файлы
+dvc add data
+
+# смотрим .dvc/cache, data.dvc
+
+#довляем локальный минио как ремоут
+dvc remote add -d myremote s3://gachi/my_data
+dvc remote modify myremote endpointurl http://127.0.0.1:9000
+dvc remote modify --local myremote access_key_id sX5roX3b4XtaEbeoWmGq
+dvc remote modify --local myremote secret_access_key vUWmonIGG7dtR2eBeRSaJs07gjwsfQTuyRXnPtxn
+
+dvc push -r myremote # пушим данные в s3
+# смотрим данные в s3
+
+# удаляем папку data и .dvc/cache
+rm -rf data && rm -rf .dvc/cache
+dvc pull
+# смотрим, что наши данные скачались
+
+
+
+# Подняли clearml компоузом, переименовав в нем образ эластика (оставив только название без префикса)
+# Скопировали креды с UI и вставили их в команде clearml-init
+#Запустили test_clearml.py
+python3 test_clearml.py
